@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Buy Items{% endblock %}
+{% block content %}
+<h2>Available Items</h2>
+{% if items %}
+    <ul class="items-list">
+        {% for item in items %}
+            <li class="item-card">
+                <h3>{{ item.title }}</h3>
+                {% if item.image_filename %}
+                    <img src="{{ url_for('static', filename='uploads/' + item.image_filename) }}" alt="{{ item.title }}" class="item-image" />
+                {% endif %}
+                <p><strong>Price:</strong> ₹{{ "%.2f"|format(item.price) }}</p>
+                <p><strong>Category:</strong> {{ item.category }}</p>
+                <p>{{ item.description }}</p>
+                <p class="date-posted">Posted on {{ item.date_posted.strftime('%d %b %Y, %H:%M') }}</p>
+
+                <form method="GET" action="{{ url_for('buy_item', item_id=item.id) }}">
+                    <button type="submit" class="buy-button">Buy</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No items available for purchase.</p>
+{% endif %}
+{% endblock %}

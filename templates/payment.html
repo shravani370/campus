@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}Payment Options{% endblock %}
+{% block content %}
+<h2>Checkout - "{{ item.title }}"</h2>
+<p><strong>Price:</strong> ₹{{ "%.2f"|format(item.price) }}</p>
+
+<form method="POST" action="{{ url_for('buy_item', item_id=item.id) }}" id="paymentForm">
+    <fieldset>
+        <legend>Select Payment Method:</legend>
+        <label><input type="radio" name="payment_method" value="cod" required> Cash on Delivery (COD)</label><br>
+        <label><input type="radio" name="payment_method" value="upi"> UPI</label><br>
+        <label><input type="radio" name="payment_method" value="card"> Credit/Debit Card</label><br>
+        <label><input type="radio" name="payment_method" value="netbanking"> Net Banking</label><br>
+        <label><input type="radio" name="payment_method" value="wallet"> Wallets (Paytm, PhonePe, etc.)</label>
+    </fieldset>
+
+    <div id="paymentDetails" style="margin-top:1rem;">
+        <!-- Dynamic payment fields will appear here -->
+    </div>
+
+    <button type="submit" style="margin-top:1.5rem;">Confirm Payment</button>
+</form>
+
+<script>
+    const paymentForm = document.getElementById('paymentForm');
+    const paymentDetailsDiv = document.getElementById('paymentDetails');
+
+    function clearPaymentDetails() {
+        paymentDetailsDiv.innerHTML = '';
+    }
+
+    function createInput(labelText, inputType, inputName, placeholder = '', maxLength = '') {
+        const label = document.createElement('label');
+        label.style.display = 'block';
+        label.style.marginTop = '0.8rem';
+        label.textContent = labelText;
+
+        const input = document.createElement('input');
+        input.type = inputType;
+        input.name = inputName;
+        input.placeholder = placeholder;
+        input.required = true;
+        if (maxLength) input.maxLength = maxLength;
+        input.style.width = '100%';
+        input.style.padding = '0.5rem';
+        input.style.marginTop = '0.3rem';
+        input.style.border = '1px solid #ccc';
+        input.style.borderRadius = '5px';
+
+        label.appendChild(input);
+        return label;
+    }
+
+    paymentForm.addEventListener('change', (e) => {
+        if (e.target.name === 'payment_method') {
+            clearPaymentDetails();
+            switch(e.target.value) {
+                case 'upi':
+                    paymentDetailsDiv.appendChild(createInput('Enter UPI ID:', 'text', 'upi_id', 'example@bank'));
+                    break;
+                case 'card':
+                    paymentDetailsDiv.appendChild(createInput('Card Number:', 'text', 'card_number', '1234 5678 9012 3456', 19));
+                    paymentDetailsDiv.appendChild(createInput('Name on Card:', 'text', 'card_name', 'Full Name'));
+                    paymentDetailsDiv.appendChild(createInput('Expiry Date (MM/YY):', 'text', 'card_expiry', 'MM/YY', 5));
+                    paymentDetailsDiv.appendChild(createInput('CVV:', 'password', 'card_cvv', '', 3));
+                    break;
+                case 'netbanking':
+                    paymentDetailsDiv.appendChild(createInput('Bank Name:', 'text', 'bank_name', 'Your Bank'));
+                    paymentDetailsDiv.appendChild(createInput('Account Number:', 'text', 'account_number', 'XXXXXXXXXXXX'));
+                    break;
+                case 'wallet':
+                    paymentDetailsDiv.appendChild(createInput('Wallet Provider:', 'text', 'wallet_provider', 'Paytm, PhonePe, etc.'));
+                    paymentDetailsDiv.appendChild(createInput('Mobile Number:', 'text', 'wallet_mobile', '10-digit mobile number', 10));
+                    break;
+                case 'cod':
+                    // No extra fields for COD
+                    break;
+            }
+        }
+    });
+</script>
+
+<style>
+    fieldset {
+        border: 1px solid #007bff;
+        border-radius: 8px;
+        padding: 1rem 1.5rem;
+        max-width: 400px;
+        margin-bottom: 1rem;
+    }
+    legend {
+        font-weight: 700;
+        color: #004080;
+        padding: 0 0.5rem;
+    }
+    label {
+        font-weight: 600;
+        color: #004080;
+    }
+    button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 0.8rem 1.8rem;
+        font-size: 1.1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 700;
+        box-shadow: 0 4px 10px rgba(0,123,255,0.5);
+        transition: background-color 0.3s ease;
+    }
+    button:hover,
+    button:focus {
+        background-color: #0056b3;
+        outline: none;
+        box-shadow: 0 6px 15px rgba(0,86,179,0.7);
+    }
+</style>
+{% endblock %}

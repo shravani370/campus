@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SGGS Campus Cart - {% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>SGGS College Campus Cart</h1>
+            {% if session.get('user_id') %}
+                <nav>
+                    <form action="{{ url_for('home') }}" method="get" style="display:inline;">
+                        <button type="submit" class="nav-button">Home</button>
+                    </form>
+                    <form action="{{ url_for('buy') }}" method="get" style="display:inline;">
+                        <button type="submit" class="nav-button">Buy</button>
+                    </form>
+                    <form action="{{ url_for('sell') }}" method="get" style="display:inline;">
+                        <button type="submit" class="nav-button">Sell</button>
+                    </form>
+                    <form action="{{ url_for('logout') }}" method="get" style="display:inline;">
+                        <button type="submit" class="nav-button logout-button">Logout</button>
+                    </form>
+                </nav>
+                <p>Logged in as <strong>{{ current_user().username }}</strong></p>
+            {% else %}
+                <nav>
+                    <form action="{{ url_for('login') }}" method="get" style="display:inline;">
+                        <button type="submit" class="nav-button">Login</button>
+                    </form>
+                    <form action="{{ url_for('register') }}" method="get" style="display:inline;">
+                        <button type="submit" class="nav-button">Register</button>
+                    </form>
+                </nav>
+            {% endif %}
+        </header>
+
+        <main>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <p class="{{ category }}">{{ message }}</p>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer>
+            <p>© SGGS College Campus Cart</p>
+        </footer>
+    </div>
+</body>
+</html>

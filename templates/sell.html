@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Sell Item{% endblock %}
+{% block content %}
+<h2>Sell an Item</h2>
+<form method="POST" action="{{ url_for('sell') }}" enctype="multipart/form-data">
+    <label for="title">Title:</label>
+    <input type="text" id="title" name="title" required />
+
+    <label for="price">Price (₹):</label>
+    <input type="number" step="0.01" id="price" name="price" required />
+
+    <label for="category">Category:</label>
+    <select id="category" name="category" required>
+        <option value="" disabled selected>Select category</option>
+        <option value="Textbooks">Textbooks</option>
+        <option value="Electronics">Electronics</option>
+        <option value="Clothing">Clothing</option>
+        <option value="Others">Others</option>
+    </select>
+
+    <label for="description">Description:</label>
+    <textarea id="description" name="description" rows="4" required></textarea>
+
+    <label for="image">Upload Photo:</label>
+    <input type="file" id="image" name="image" accept="image/*" />
+
+    <button type="submit">Post Item</button>
+</form>
+{% endblock %}
