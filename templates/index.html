@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CAMPUS-CART - Home</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+
+<body style="background-color:#8bc3ff;margin:0;font-family:'Poppins',sans-serif;">
+  <header style="display:flex;justify-content:space-between;align-items:center;padding:1rem 2rem;background-color:#004aad;color:white;">
+    <h1><i class="fas fa-university"></i> CAMPUS-CART</h1>
+    <div style="display:flex;gap:1.5rem;align-items:center;">
+      {% if session.user %}
+        <a href="/logout" style="color:white;text-decoration:none;"><i class="fas fa-sign-out-alt"></i> Logout ({{ session.user }})</a>
+      {% else %}
+        <a href="/login" style="color:white;text-decoration:none;"><i class="fas fa-sign-in-alt"></i> Login</a>
+      {% endif %}
+      <a href="/cart" style="color:white;text-decoration:none;"><i class="fas fa-shopping-cart"></i> Cart</a>
+    </div>
+  </header>
+
+  <main style="text-align:center;padding-top:5rem;">
+    <h2 style="font-size:2rem;">Welcome to CAMPUS-CART</h2>
+    <p>Buy and sell campus essentials with ease!</p>
+
+    {% if session.user %}
+    <div style="margin-top:3rem;display:flex;justify-content:center;gap:3rem;">
+      <a href="/buy" style="background-color:#c67b3e;color:white;padding:1rem 2rem;border-radius:2rem;text-decoration:none;font-size:1.2rem;font-weight:600;"><i class="fas fa-shopping-bag"></i> Buy Items</a>
+      <a href="/sell" style="background-color:#c67b3e;color:white;padding:1rem 2rem;border-radius:2rem;text-decoration:none;font-size:1.2rem;font-weight:600;"><i class="fas fa-plus"></i> Sell Items</a>
+      <a href="/listings" style="background-color:#c67b3e;color:white;padding:1rem 2rem;border-radius:2rem;text-decoration:none;font-size:1.2rem;font-weight:600;"><i class="fas fa-list"></i> Your Listings</a>
+    </div>
+    {% endif %}
+  </main>
+</body>
+</html>

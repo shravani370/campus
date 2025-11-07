@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CAMPUS-CART - Order Confirmation</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body style="background-color:#8bc3ff; font-family:'Poppins', sans-serif; margin:0;">
+
+  <!-- Header -->
+  <header style="display:flex; justify-content:space-between; align-items:center; padding:1rem 2rem; background:#007bff; color:white;">
+    <h1 style="margin:0; font-size:1.8rem;"><i class="fas fa-university"></i> CAMPUS-CART</h1>
+    <a href="/" style="color:white; text-decoration:none; font-weight:500;">Back to Home</a>
+  </header>
+
+  <!-- Main content -->
+  <main style="display:flex; flex-direction:column; align-items:center; padding:3rem;">
+    <div style="background:white; padding:2.5rem 3rem; border-radius:1rem; box-shadow:0 0 20px rgba(0,0,0,0.25); width:500px; text-align:center;">
+      <h2 style="margin-top:0;"><i class="fas fa-check-circle" style="color:green;"></i> Order Placed Successfully!</h2>
+
+      <p style="font-size:18px; margin:1rem 0;"><strong>Payment Method:</strong> {{ order['payment_method']|capitalize }}</p>
+
+      {% if order['payment_method'] == 'upi' %}
+      <p style="font-size:18px; margin:0.5rem 0;"><strong>UPI ID:</strong> {{ order['upi_id'] }}</p>
+      {% endif %}
+
+      <h3 style="margin-top:2rem;">Items Ordered:</h3>
+      <div style="text-align:left; margin-top:1rem;">
+        {% for item in order['items'] %}
+          <div style="border-bottom:1px solid #ddd; padding:0.5rem 0;">
+            <p style="margin:0;"><strong>{{ item['name'] }}</strong> - ${{ "%.2f"|format(item['price']/100) }}</p>
+            <p style="margin:0; font-size:0.9rem; color:#555;">Seller: {{ item['seller'] }}</p>
+          </div>
+        {% endfor %}
+      </div>
+
+      <p style="font-size:20px; margin-top:1.5rem;"><strong>Total:</strong> ${{ "%.2f"|format(order['total']/100) }}</p>
+
+      <a href="/" style="margin-top:2rem; display:inline-block; text-decoration:none; background-color:#c67b3e; color:white; padding:0.8rem 1.5rem; border-radius:0.5rem; font-size:18px; transition:0.3s;"
+         onmouseover="this.style.backgroundColor='#007bff'"
+         onmouseout="this.style.backgroundColor='#c67b3e'">
+        <i class="fas fa-home" style="margin-right:0.5rem;"></i> Back to Home
+      </a>
+    </div>
+  </main>
+
+</body>
+</html>

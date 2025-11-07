@@ -1,29 +1,176 @@
-{% extends "base.html" %}
-{% block title %}Sell Item{% endblock %}
-{% block content %}
-<h2>Sell an Item</h2>
-<form method="POST" action="{{ url_for('sell') }}" enctype="multipart/form-data">
-    <label for="title">Title:</label>
-    <input type="text" id="title" name="title" required />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CAMPUS-CART - Sell Item</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #8bc3ff;
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+    }
 
-    <label for="price">Price (₹):</label>
-    <input type="number" step="0.01" id="price" name="price" required />
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 2rem;
+      background: #007bff;
+      color: white;
+    }
 
-    <label for="category">Category:</label>
-    <select id="category" name="category" required>
-        <option value="" disabled selected>Select category</option>
-        <option value="Textbooks">Textbooks</option>
-        <option value="Electronics">Electronics</option>
-        <option value="Clothing">Clothing</option>
-        <option value="Others">Others</option>
-    </select>
+    header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
 
-    <label for="description">Description:</label>
-    <textarea id="description" name="description" rows="4" required></textarea>
+    header a {
+      text-decoration: none;
+      color: white;
+      font-weight: 500;
+      font-size: 1.1rem;
+      transition: 0.3s;
+    }
 
-    <label for="image">Upload Photo:</label>
-    <input type="file" id="image" name="image" accept="image/*" />
+    header a:hover {
+      color: #ffd700;
+    }
 
-    <button type="submit">Post Item</button>
-</form>
-{% endblock %}
+    h2 {
+      text-align: center;
+      font-size: 2.5rem;
+      color: #333;
+      margin-top: 2.5rem;
+      letter-spacing: 1px;
+      font-weight: 700;
+      text-transform: uppercase;
+      position: relative;
+    }
+
+    h2::after {
+      content: "";
+      width: 80px;
+      height: 4px;
+      background-color: #c67b3e;
+      display: block;
+      margin: 10px auto 0;
+      border-radius: 2px;
+    }
+
+    .sell-form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: white;
+      width: 600px;
+      margin: 2.5rem auto;
+      padding: 3rem 3rem 4rem 3rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.25);
+    }
+
+    .sell-form label {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+      width: 100%;
+    }
+
+    .sell-form input[type="text"],
+    .sell-form input[type="number"] {
+      width: 100%;
+      height: 2.5rem;
+      border-radius: 0.5rem;
+      border: 2px solid #000;
+      padding-left: 0.6rem;
+      margin-bottom: 1.8rem;
+      font-size: 1rem;
+    }
+
+    .file-input-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 2rem;
+      width: 100%;
+    }
+
+    .file-input-container label {
+      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .file-input-container input[type="file"] {
+      border: none;
+      background-color: #f1f1f1;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+    }
+
+    .file-input-container input[type="file"]::-webkit-file-upload-button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .file-input-container input[type="file"]::-webkit-file-upload-button:hover {
+      background-color: #0056b3;
+    }
+
+    .checkout-btn {
+      background-color: #c67b3e;
+      color: white;
+      font-size: 1.2rem;
+      border: none;
+      padding: 0.9rem 2rem;
+      border-radius: 0.6rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .checkout-btn:hover {
+      background-color: #a85f26;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1><i class="fas fa-university"></i> CAMPUS-CART</h1>
+    <a href="/">Back to Home</a>
+  </header>
+
+  <main>
+    <h2><i class="fas fa-plus"></i> Sell Your Item</h2>
+
+    <form method="POST" enctype="multipart/form-data" class="sell-form">
+      <label for="name"><i class="fas fa-tag"></i> Item Name:</label>
+      <input type="text" id="name" name="name" required placeholder="Enter item name">
+
+      <label for="price"><i class="fas fa-dollar-sign"></i> Price (in ₹):</label>
+      <input type="number" id="price" name="price" required placeholder="Enter item price">
+
+      <div class="file-input-container">
+        <label for="photo"><i class="fas fa-camera"></i> Upload Photo:</label>
+        <input type="file" id="photo" name="photo" accept="image/*">
+      </div>
+
+      <button type="submit" class="checkout-btn"><i class="fas fa-upload"></i> List Item</button>
+    </form>
+  </main>
+</body>
+</html>

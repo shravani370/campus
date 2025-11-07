@@ -1,294 +1,147 @@
-/* Reset */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+/* ---------- Base Styles ---------- */
+:root {
+  --primary: #007bff;
+  --primary-dark: #0056b3;
+  --text-dark: #222;
+  --text-light: #fff;
+  --bg-light: #f8fafc;
+  --shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
-    background: #f0f4f8;
-    color: #333;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
+  font-family: 'Poppins', sans-serif;
+  background: var(--bg-light);
+  color: var(--text-dark);
+  line-height: 1.6;
+  min-height: 100vh;
 }
 
-/* Center container with max width and vertical spacing */
-.container {
-    max-width: 900px;
-    margin: 2rem auto 3rem;
-    padding: 0 1.5rem;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    display: flex;
-    flex-direction: column;
-    min-height: 90vh;
-}
-
-/* Header styling */
+/* ---------- Header ---------- */
 header {
-    text-align: center;
-    padding: 1.5rem 0 1rem;
-    border-bottom: 2px solid #007bff;
+  background: var(--primary);
+  color: var(--text-light);
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 header h1 {
-    margin: 0 0 0.5rem 0;
-    font-size: 2.4rem;
-    color: #004080;
+  font-weight: 600;
+  font-size: 1.5rem;
+  letter-spacing: 1px;
 }
 
-/* Navigation buttons container */
-nav {
-    margin-bottom: 0.8rem;
+nav a {
+  color: var(--text-light);
+  text-decoration: none;
+  margin-left: 1.5rem;
+  font-weight: 400;
+  transition: opacity 0.2s ease;
 }
 
-nav form {
-    display: inline-block;
-    margin: 0 0.3rem;
+nav a:hover {
+  opacity: 0.8;
 }
 
-/* Navigation buttons */
-.nav-button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 0.5rem 1.2rem;
-    font-size: 1rem;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background-color 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0,123,255,0.4);
+/* ---------- Hero Section ---------- */
+.hero {
+  position: relative;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: var(--text-light);
+  padding: 5rem 2rem;
+  text-align: center;
+  border-radius: 0 0 30px 30px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
 }
 
-.nav-button:hover,
-.nav-button:focus {
-    background-color: #0056b3;
-    outline: none;
-    box-shadow: 0 4px 10px rgba(0,86,179,0.6);
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('https://source.unsplash.com/1600x900/?campus,students') center/cover no-repeat;
+  opacity: 0.25;
+  z-index: 0;
 }
 
-.logout-button {
-    background-color: #dc3545;
-    box-shadow: 0 2px 5px rgba(220,53,69,0.5);
+.hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
-.logout-button:hover,
-.logout-button:focus {
-    background-color: #a71d2a;
-    box-shadow: 0 4px 10px rgba(167,29,42,0.7);
+.hero h2 {
+  font-size: 2.8rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
 }
 
-/* Main content grows to fill space */
+.hero p {
+  font-size: 1.1rem;
+  font-weight: 300;
+  opacity: 0.95;
+  margin-bottom: 2rem;
+}
+
+.hero .btn {
+  background: var(--text-light);
+  color: var(--primary-dark);
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow);
+}
+
+.hero .btn:hover {
+  background: var(--primary-dark);
+  color: var(--text-light);
+}
+
+/* ---------- Main Content ---------- */
 main {
-    flex-grow: 1;
-    padding-bottom: 2rem;
+  padding: 3rem 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
 }
 
-/* Footer styling */
+section {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  margin-bottom: 2rem;
+}
+
+section h3 {
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+  border-left: 5px solid var(--primary);
+  padding-left: 0.6rem;
+}
+
+/* ---------- Footer ---------- */
 footer {
-    text-align: center;
-    padding: 1rem 0;
-    border-top: 1px solid #ddd;
-    color: #666;
-    font-size: 0.9rem;
-}
-
-/* Flash messages centered */
-.error, .success {
-    max-width: 600px;
-    margin: 1rem auto;
-    text-align: center;
-    padding: 1rem;
-    border-radius: 5px;
-}
-
-.error {
-    background-color: #ffdddd;
-    border: 1px solid #ff5c5c;
-    color: #a70000;
-}
-
-.success {
-    background-color: #ddffdd;
-    border: 1px solid #5cb85c;
-    color: #3c763d;
-}
-
-/* Form container styling */
-form {
-    max-width: 400px;
-    margin: 1rem auto 2rem;
-    background: #f9fbfd;
-    padding: 2rem 2.5rem;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
-/* Form labels */
-form label {
-    display: block;
-    margin-top: 1rem;
-    font-weight: 600;
-    color: #004080;
-}
-
-/* Form inputs */
-form input[type="text"],
-form input[type="password"],
-form input[type="number"],
-form select,
-form textarea,
-form input[type="file"] {
-    width: 100%;
-    padding: 0.6rem 0.8rem;
-    margin-top: 0.3rem;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 1rem;
-    transition: border-color 0.3s ease;
-    resize: vertical;
-}
-
-form input[type="text"]:focus,
-form input[type="password"]:focus,
-form input[type="number"]:focus,
-form select:focus,
-form textarea:focus,
-form input[type="file"]:focus {
-    border-color: #007bff;
-    outline: none;
-    box-shadow: 0 0 5px rgba(0,123,255,0.5);
-}
-
-/* Form buttons */
-form button {
-    margin-top: 1.5rem;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 0.8rem 1.8rem;
-    font-size: 1.1rem;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 700;
-    box-shadow: 0 4px 10px rgba(0,123,255,0.5);
-    transition: background-color 0.3s ease;
-}
-
-form button:hover,
-form button:focus {
-    background-color: #0056b3;
-    outline: none;
-    box-shadow: 0 6px 15px rgba(0,86,179,0.7);
-}
-
-/* Link below forms */
-form + p {
-    text-align: center;
-    margin-top: 1rem;
-    font-size: 0.95rem;
-}
-
-form + p a {
-    color: #007bff;
-    text-decoration: none;
-    font-weight: 600;
-}
-
-form + p a:hover,
-form + p a:focus {
-    text-decoration: underline;
-}
-
-/* Home page Buy/Sell buttons */
-.home-button {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    padding: 1rem 3rem;
-    font-size: 1.4rem;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 700;
-    margin: 1rem 1rem 1rem 0;
-    box-shadow: 0 4px 10px rgba(40,167,69,0.5);
-    transition: background-color 0.3s ease;
-}
-
-.home-button:hover,
-.home-button:focus {
-    background-color: #1e7e34;
-    outline: none;
-    box-shadow: 0 6px 15px rgba(30,126,52,0.7);
-}
-
-/* Buy page item list */
-.items-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-}
-
-.item-card {
-    background: #f9fbfd;
-    border-radius: 10px;
-    padding: 1rem 1.2rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.item-card h3 {
-    margin-top: 0;
-    color: #004080;
-}
-
-.item-image {
-    max-width: 100%;
-    height: auto;
-    border-radius: 6px;
-    margin: 0.5rem 0 1rem 0;
-    object-fit: contain;
-}
-
-.item-card p {
-    margin: 0.3rem 0;
-    font-size: 0.95rem;
-}
-
-.date-posted {
-    font-size: 0.8rem;
-    color: #666;
-    margin-top: auto;
-}
-
-/* Buy button on item cards */
-.buy-button {
-    margin-top: 1rem;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 0.6rem 1.2rem;
-    font-size: 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
-    box-shadow: 0 3px 8px rgba(0,123,255,0.5);
-    transition: background-color 0.3s ease;
-}
-
-.buy-button:hover,
-.buy-button:focus {
-    background-color: #0056b3;
-    outline: none;
-    box-shadow: 0 5px 15px rgba(0,86,179,0.7);
+  background: var(--primary-dark);
+  color: var(--text-light);
+  text-align: center;
+  padding: 1rem 0;
+  font-size: 0.9rem;
+  margin-top: 3rem;
 }
