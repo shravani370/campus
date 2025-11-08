@@ -1,10 +1,8 @@
-from flask import Flask, request, jsonify, render_template, session, redirect, url_for, flash
+from flask import Flask, request, render_template, session, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from functools import wraps
 import os
 from werkzeug.utils import secure_filename
-from datetime import datetime
-from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-change-this'
@@ -21,13 +19,13 @@ ALLOWED_DOMAIN = 'sggs.ac.in'
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(200), nullable=False)
+    password = db.Column(db.String(120), nullable=False)
 
 class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     price = db.Column(db.Integer, nullable=False)
-    photo = db.Column(db.String(200), nullable=True)
+    photo = db.Column(db.String(200), nullable=True)  # store relative path like 'uploads/file.jpg'
     seller_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     seller = db.relationship('User', backref=db.backref('items', lazy=True))
 
@@ -47,12 +45,13 @@ def login_required(f):
     return decorated_function
 
 # ---------------------- ROUTES ----------------------
+
 @app.route('/')
 @login_required
 def index():
     user = User.query.filter_by(email=session['user']).first()
     user_items = Item.query.filter_by(seller_id=user.id).all() if user else []
-    return render_template('listings.html', user_items=user_items)
+    return render_template('index.html', user_items=user_items)
 
 # ---------- LOGIN ----------
 @app.route('/login', methods=['GET', 'POST'])
@@ -61,17 +60,16 @@ def login():
         email = request.form['email'].strip().lower()
         password = request.form['password'].strip()
 
-        # Fix: domain check must include '@'
-        if not email.endswith(f"@{ALLOWED_DOMAIN}"):
+        if not email.endswith(ALLOWED_DOMAIN):
             return render_template('login.html', error='Email must end with @sggs.ac.in')
 
         user = User.query.filter_by(email=email).first()
         if not user:
-            user = User(email=email, password=generate_password_hash(password))
+            user = User(email=email, password=password)
             db.session.add(user)
             db.session.commit()
 
-        if check_password_hash(user.password, password):
+        if user.password == password:
             session['user'] = email
             session['cart'] = []
             flash('Login successful!')
@@ -100,10 +98,9 @@ def sell():
 
         if photo and allowed_file(photo.filename):
             os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-            filename = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{secure_filename(photo.filename)}"
+            filename = secure_filename(photo.filename)
             photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            # Fix: store relative path only (not static/static)
-            photo_path = f"uploads/{filename}"
+            photo_path = f'uploads/{filename}'  # store relative path
 
         user = User.query.filter_by(email=session['user']).first()
         new_item = Item(name=name, price=price, photo=photo_path, seller_id=user.id)
@@ -122,6 +119,13 @@ def buy():
     items = Item.query.filter(Item.seller_id != user.id).all()
     return render_template('buy.html', items=items)
 
+# ---------- BUY NOW ----------
+@app.route('/buy-now/<int:item_id>')
+@login_required
+def buy_now(item_id):
+    # For simplicity, redirect to add to cart
+    return redirect(url_for('add_to_cart', item_id=item_id))
+
 # ---------- ADD TO CART ----------
 @app.route('/add-to-cart/<int:item_id>')
 @login_required
@@ -133,15 +137,6 @@ def add_to_cart(item_id):
     session.modified = True
     flash(f"{item.name} added to cart!")
     return redirect(url_for('buy'))
-
-# ---------- BUY NOW (Fixed Missing Route) ----------
-@app.route('/buy-now/<int:item_id>')
-@login_required
-def buy_now(item_id):
-    item = Item.query.get_or_404(item_id)
-    session['cart'] = [{'id': item.id, 'name': item.name, 'price': item.price, 'seller': item.seller.email}]
-    session.modified = True
-    return redirect(url_for('checkout'))
 
 # ---------- REMOVE FROM CART ----------
 @app.route('/remove-from-cart/<int:item_id>')
@@ -202,4 +197,4 @@ def process_order():
 
 # ---------- RUN ----------
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    app.run(host='0.0.0.0', port=5000, debug=True)
