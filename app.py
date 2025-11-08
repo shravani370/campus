@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify, render_template, session, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from functools import wraps
-import os
 from werkzeug.utils import secure_filename
+from werkzeug.security import generate_password_hash, check_password_hash
+import os
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-change-this'
@@ -19,12 +21,12 @@ ALLOWED_DOMAIN = 'sggs.ac.in'
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(120), nullable=False)
+    password = db.Column(db.String(255), nullable=False)
 
 class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    price = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Float, nullable=False)  # store in rupees directly
     photo = db.Column(db.String(200), nullable=True)
     seller_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     seller = db.relationship('User', backref=db.backref('items', lazy=True))
@@ -50,7 +52,7 @@ def login_required(f):
 def index():
     user = User.query.filter_by(email=session['user']).first()
     user_items = Item.query.filter_by(seller_id=user.id).all() if user else []
-    return render_template('index.html', user_items=user_items)
+    return render_template('listings.html', user_items=user_items)
 
 # ---------- LOGIN ----------
 @app.route('/login', methods=['GET', 'POST'])
@@ -59,16 +61,17 @@ def login():
         email = request.form['email'].strip().lower()
         password = request.form['password'].strip()
 
-        if not email.endswith(ALLOWED_DOMAIN):
+        if not email.endswith(f"@{ALLOWED_DOMAIN}"):
             return render_template('login.html', error='Email must end with @sggs.ac.in')
 
         user = User.query.filter_by(email=email).first()
         if not user:
-            user = User(email=email, password=password)
+            hashed_pw = generate_password_hash(password)
+            user = User(email=email, password=hashed_pw)
             db.session.add(user)
             db.session.commit()
 
-        if user.password == password:
+        if check_password_hash(user.password, password):
             session['user'] = email
             session['cart'] = []
             flash('Login successful!')
@@ -83,6 +86,7 @@ def login():
 def logout():
     session.pop('user', None)
     session.pop('cart', None)
+    flash("Logged out successfully.")
     return redirect(url_for('login'))
 
 # ---------- SELL ----------
@@ -91,15 +95,16 @@ def logout():
 def sell():
     if request.method == 'POST':
         name = request.form['name']
-        price = int(request.form['price'])
+        price = float(request.form['price'])
         photo = request.files.get('photo')
         photo_path = None
 
         if photo and allowed_file(photo.filename):
             os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-            filename = secure_filename(photo.filename)
-            photo_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            photo.save(photo_path)
+            unique_name = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{secure_filename(photo.filename)}"
+            save_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_name)
+            photo.save(save_path)
+            photo_path = f"uploads/{unique_name}"
 
         user = User.query.filter_by(email=session['user']).first()
         new_item = Item(name=name, price=price, photo=photo_path, seller_id=user.id)
@@ -149,7 +154,7 @@ def cart():
     return render_template('cart.html', cart=cart_items, total=total)
 
 # ---------- CHECKOUT ----------
-@app.route('/checkout', methods=['GET'])
+@app.route('/checkout')
 @login_required
 def checkout():
     cart_items = session.get('cart', [])
@@ -186,6 +191,16 @@ def process_order():
     flash("Order placed successfully!")
 
     return render_template('order_confirmation.html', order=order_summary)
+
+# ---------- BUY NOW (NEWLY ADDED) ----------
+@app.route('/buy-now/<int:item_id>')
+@login_required
+def buy_now(item_id):
+    item = Item.query.get_or_404(item_id)
+    session['cart'] = [{'id': item.id, 'name': item.name, 'price': item.price, 'seller': item.seller.email}]
+    session.modified = True
+    flash(f"Proceeding to checkout for {item.name}")
+    return redirect(url_for('checkout'))
 
 # ---------- RUN ----------
 if __name__ == '__main__':

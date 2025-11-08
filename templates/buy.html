@@ -8,193 +8,38 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
   <style>
-    /* General Styles */
-    body {
-      margin: 0;
-      font-family: 'Poppins', sans-serif;
-      background-color: #f8fafc;
-    }
-    a {
-      text-decoration: none;
-    }
+    body { margin: 0; font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+    a { text-decoration: none; }
+    header { background: #007bff; color: white; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+    header h1 { font-size: 1.6rem; margin: 0; display: flex; align-items: center; gap: 0.5rem; }
+    nav a { color: white; margin-left: 1rem; display: inline-flex; align-items: center; gap: 0.3rem; transition: 0.2s; }
+    nav a:hover { opacity: 0.8; }
 
-    /* Header */
-    header {
-      background: #007bff;
-      color: white;
-      padding: 1rem 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-    }
-    header h1 {
-      font-size: 1.6rem;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    nav a {
-      color: white;
-      margin-left: 1rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-      transition: 0.2s;
-    }
-    nav a:hover {
-      opacity: 0.8;
-    }
+    .hero { background: linear-gradient(135deg, #007bff, #0056b3); color: white; padding: 4rem 2rem; text-align: center; }
+    .hero h2 { font-size: 2.5rem; margin-bottom: 1rem; font-weight: 600; }
+    .hero a { background: white; color: #0056b3; padding: 0.8rem 2rem; border-radius: 50px; font-weight: 600; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
 
-    /* Hero Section */
-    .hero {
-      position: relative;
-      background: linear-gradient(135deg, #007bff, #0056b3);
-      color: white;
-      padding: 4rem 2rem;
-      text-align: center;
-    }
-    .hero h2 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-      font-weight: 600;
-    }
-    .hero p {
-      font-size: 1.1rem;
-      margin-bottom: 2rem;
-    }
-    .hero a {
-      background: white;
-      color: #0056b3;
-      padding: 0.8rem 2rem;
-      border-radius: 50px;
-      font-weight: 600;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: 0.3s;
-    }
-    .hero a:hover {
-      transform: translateY(-3px);
-    }
+    main { padding: 2rem; max-width: 1100px; margin: 0 auto; }
+    .products { display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem; }
+    .product-card { background: white; border-radius: 1rem; box-shadow: 0 4px 10px rgba(0,0,0,0.1); overflow: hidden; width: 250px; transition: transform 0.3s; display: flex; flex-direction: column; }
+    .product-card:hover { transform: translateY(-5px); }
+    .product-card img { width: 100%; height: 160px; object-fit: cover; }
+    .product-card .card-content { padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+    .product-card .price { font-weight: 600; color: #007bff; }
+    .actions { display: flex; justify-content: space-between; margin-top: 1rem; }
+    .actions a { padding: 0.5rem 1rem; border-radius: 0.5rem; color: white; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 0.3rem; }
+    .add { background: #007bff; }
+    .buy { background: #c67b3e; }
+    footer { background: #0056b3; color: white; text-align: center; padding: 1rem; margin-top: 2rem; }
 
-    /* Products Section */
-    main {
-      padding: 2rem;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-    .products {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 2rem;
-    }
-    .product-card {
-      background: white;
-      border-radius: 1rem;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      overflow: hidden;
-      width: 250px;
-      transition: transform 0.3s;
-      display: flex;
-      flex-direction: column;
-    }
-    .product-card:hover {
-      transform: translateY(-5px);
-    }
-    .product-card img {
-      width: 100%;
-      height: 160px;
-      object-fit: cover;
-    }
-    .product-card .card-content {
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    .product-card h3 {
-      margin: 0;
-      color: #333;
-    }
-    .product-card p {
-      margin: 0.3rem 0;
-    }
-    .product-card .price {
-      font-weight: 600;
-      color: #007bff;
-    }
-    .product-card .actions {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 1rem;
-    }
-    .product-card .actions a {
-      padding: 0.5rem 1rem;
-      border-radius: 0.5rem;
-      color: white;
-      font-size: 0.9rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-      transition: 0.2s;
-    }
-    .product-card .actions a.add {
-      background: #007bff;
-    }
-    .product-card .actions a.add:hover {
-      background: #0056b3;
-    }
-    .product-card .actions a.buy {
-      background: #c67b3e;
-    }
-    .product-card .actions a.buy:hover {
-      background: #a65f2d;
-    }
-
-    /* Footer */
-    footer {
-      background: #0056b3;
-      color: white;
-      text-align: center;
-      padding: 1rem;
-      margin-top: 2rem;
-    }
-
-    /* Responsive */
     @media (max-width: 768px) {
-      header {
-        flex-direction: column;
-        text-align: center;
-        gap: 0.5rem;
-      }
-      nav {
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 1rem;
-      }
-      .products {
-        flex-direction: column;
-        align-items: center;
-      }
-      .product-card {
-        width: 90%;
-      }
-      .hero h2 {
-        font-size: 1.8rem;
-      }
-      .hero p {
-        font-size: 1rem;
-      }
+      header { flex-direction: column; text-align: center; }
+      .products { flex-direction: column; align-items: center; }
+      .product-card { width: 90%; }
     }
   </style>
 </head>
 <body>
-
-  <!-- Header -->
   <header>
     <h1><i class="fas fa-shopping-cart"></i> CAMPUS-CART</h1>
     <nav>
@@ -205,23 +50,29 @@
     </nav>
   </header>
 
-  <!-- Hero Section -->
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+  <div style="background:#dff0d8;color:#155724;padding:10px;margin:10px;border-radius:5px;">
+    {% for msg in messages %}<p>{{ msg }}</p>{% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
+
   <section class="hero">
     <h2>Buy Products Easily</h2>
-    <p>Explore items listed by fellow students. Get what you need without hassle.</p>
+    <p>Explore items listed by fellow students.</p>
     <a href="/cart"><i class="fas fa-shopping-cart"></i> View Cart</a>
   </section>
 
-  <!-- Product Section -->
   <main>
     <div class="products">
       {% for item in items %}
       <div class="product-card">
-        <img src="{{ item.image_url or 'https://source.unsplash.com/400x300/?product' }}" alt="{{ item.name }}">
+        <img src="{{ url_for('static', filename=item.photo) if item.photo else 'https://source.unsplash.com/400x300/?product' }}" alt="{{ item.name }}">
         <div class="card-content">
           <h3>{{ item.name }}</h3>
-          <p>Seller: {{ item.seller }}</p>
-          <p class="price">₹ {{ "%.2f"|format(item.price / 100) }}</p>
+          <p>Seller: {{ item.seller.email }}</p>
+          <p class="price">₹ {{ "%.2f"|format(item.price) }}</p>
           <div class="actions">
             <a class="add" href="{{ url_for('add_to_cart', item_id=item.id) }}"><i class="fas fa-cart-plus"></i> Add</a>
             <a class="buy" href="{{ url_for('buy_now', item_id=item.id) }}"><i class="fas fa-bolt"></i> Buy</a>
@@ -232,10 +83,8 @@
     </div>
   </main>
 
-  <!-- Footer -->
   <footer>
     <p>&copy; 2025 CAMPUS-CART | Connecting Students through Campus Marketplace</p>
   </footer>
-
 </body>
 </html>
