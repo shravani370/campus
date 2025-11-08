@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, session, redirect, url_for, flash
+from flask import Flask, request, jsonify, render_template, session, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from functools import wraps
 import os
@@ -12,7 +12,6 @@ app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
 
 db = SQLAlchemy(app)
-
 ALLOWED_DOMAIN = 'sggs.ac.in'
 
 # ---------------------- MODELS ----------------------
@@ -20,6 +19,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
+    items = db.relationship('Item', backref='seller', lazy=True)
 
 class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -27,7 +27,6 @@ class Item(db.Model):
     price = db.Column(db.Integer, nullable=False)
     photo = db.Column(db.String(200), nullable=True)
     seller_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    seller = db.relationship('User', backref=db.backref('items', lazy=True))
 
 with app.app_context():
     db.create_all()
@@ -45,11 +44,13 @@ def login_required(f):
     return decorated_function
 
 # ---------------------- ROUTES ----------------------
-# Home redirects to Buy Items page
+# ---------- INDEX ----------
 @app.route('/')
 @login_required
-def home():
-    return redirect(url_for('index'))
+def index():
+    user = User.query.filter_by(email=session['user']).first()
+    user_items = user.items if user else []
+    return render_template('index.html', user_items=user_items)
 
 # ---------- LOGIN ----------
 @app.route('/login', methods=['GET', 'POST'])
@@ -71,7 +72,7 @@ def login():
             session['user'] = email
             session['cart'] = []
             flash('Login successful!')
-            return redirect(url_for('home'))
+            return redirect(url_for('index'))
         else:
             return render_template('login.html', error='Invalid password')
 
@@ -105,17 +106,9 @@ def sell():
         db.session.add(new_item)
         db.session.commit()
         flash("Item listed successfully!")
-        return redirect(url_for('your_listings'))
+        return redirect(url_for('index'))
 
     return render_template('sell.html')
-
-# ---------- YOUR LISTINGS ----------
-@app.route('/your-listings')
-@login_required
-def your_listings():
-    user = User.query.filter_by(email=session['user']).first()
-    user_items = user.items if user else []
-    return render_template('listings.html', user_items=user_items)
 
 # ---------- BUY ----------
 @app.route('/buy')
@@ -132,7 +125,6 @@ def add_to_cart(item_id):
     item = Item.query.get_or_404(item_id)
     if 'cart' not in session:
         session['cart'] = []
-    # Store item details in session
     session['cart'].append({
         'id': item.id,
         'name': item.name,
@@ -163,7 +155,7 @@ def cart():
     return render_template('cart.html', cart_items=cart_items, total=total)
 
 # ---------- CHECKOUT ----------
-@app.route('/checkout', methods=['GET'])
+@app.route('/checkout', methods=['GET', 'POST'])
 @login_required
 def checkout():
     cart_items = session.get('cart', [])
@@ -183,11 +175,15 @@ def process_order():
         return redirect(url_for('cart'))
 
     payment_method = request.form.get('payment_method')
+    if not payment_method:
+        flash("Please select a payment method!")
+        return redirect(url_for('checkout'))
+
     upi_id = request.form.get('upi_id') if payment_method == 'upi' else None
 
     order_summary = {
         'items': cart_items,
-        'total': sum(item['price'] for item in cart_items),
+        'total': sum(item.get('price', 0) for item in cart_items),
         'payment_method': payment_method,
         'upi_id': upi_id
     }
@@ -196,6 +192,14 @@ def process_order():
     flash("Order placed successfully!")
 
     return render_template('order_confirmation.html', order=order_summary)
+
+# ---------- YOUR LISTINGS ----------
+@app.route('/your-listings')
+@login_required
+def your_listings():
+    user = User.query.filter_by(email=session['user']).first()
+    user_items = user.items if user else []
+    return render_template('listings.html', user_items=user_items)
 
 # ---------- RUN ----------
 if __name__ == '__main__':
