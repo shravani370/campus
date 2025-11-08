@@ -1,153 +1,205 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, request, jsonify, render_template, session, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
-from werkzeug.utils import secure_filename
-from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
+from functools import wraps
 import os
+from werkzeug.utils import secure_filename
+from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-app.secret_key = "secret_key_123"
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///campus_cart.db"
-app.config["UPLOAD_FOLDER"] = "static/uploads"
-app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024  # 5MB max
-
-ALLOWED_DOMAIN = "sggs.ac.in"
+app.secret_key = 'your-secret-key-change-this'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///campus_cart.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['UPLOAD_FOLDER'] = 'static/uploads'
+app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
 
 db = SQLAlchemy(app)
 
-# ------------------ MODELS ------------------
+ALLOWED_DOMAIN = 'sggs.ac.in'
 
+# ---------------------- MODELS ----------------------
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(100), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
-
 
 class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.String(500), nullable=False)
-    price = db.Column(db.Float, nullable=False)
-    photo = db.Column(db.String(200), nullable=False)
-    seller_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    seller = db.relationship("User", backref="items")
+    price = db.Column(db.Integer, nullable=False)
+    photo = db.Column(db.String(200), nullable=True)
+    seller_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    seller = db.relationship('User', backref=db.backref('items', lazy=True))
 
+with app.app_context():
+    db.create_all()
 
-# ------------------ ROUTES ------------------
+# ---------------------- HELPERS ----------------------
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
-@app.route("/")
-def home():
-    return render_template("listings.html", items=Item.query.all())
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
 
+# ---------------------- ROUTES ----------------------
+@app.route('/')
+@login_required
+def index():
+    user = User.query.filter_by(email=session['user']).first()
+    user_items = Item.query.filter_by(seller_id=user.id).all() if user else []
+    return render_template('listings.html', user_items=user_items)
 
-@app.route("/signup", methods=["GET", "POST"])
-def signup():
-    if request.method == "POST":
-        email = request.form["email"].strip()
-        password = request.form["password"]
-
-        if not email.endswith(f"@{ALLOWED_DOMAIN}"):
-            flash("Only SGGS domain emails are allowed.")
-            return redirect(url_for("signup"))
-
-        if User.query.filter_by(email=email).first():
-            flash("Email already registered.")
-            return redirect(url_for("signup"))
-
-        hashed_pw = generate_password_hash(password)
-        user = User(email=email, password=hashed_pw)
-        db.session.add(user)
-        db.session.commit()
-
-        flash("Signup successful! Please log in.")
-        return redirect(url_for("login"))
-    return render_template("signup.html")
-
-
-@app.route("/login", methods=["GET", "POST"])
+# ---------- LOGIN ----------
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == "POST":
-        email = request.form["email"]
-        password = request.form["password"]
+    if request.method == 'POST':
+        email = request.form['email'].strip().lower()
+        password = request.form['password'].strip()
+
+        # Fix: domain check must include '@'
+        if not email.endswith(f"@{ALLOWED_DOMAIN}"):
+            return render_template('login.html', error='Email must end with @sggs.ac.in')
 
         user = User.query.filter_by(email=email).first()
-        if user and check_password_hash(user.password, password):
-            session["user_id"] = user.id
-            session["email"] = user.email
-            flash("Login successful!")
-            return redirect(url_for("home"))
+        if not user:
+            user = User(email=email, password=generate_password_hash(password))
+            db.session.add(user)
+            db.session.commit()
+
+        if check_password_hash(user.password, password):
+            session['user'] = email
+            session['cart'] = []
+            flash('Login successful!')
+            return redirect(url_for('index'))
         else:
-            flash("Invalid email or password.")
-            return redirect(url_for("login"))
-    return render_template("login.html")
+            return render_template('login.html', error='Invalid password')
 
+    return render_template('login.html')
 
-@app.route("/logout")
+# ---------- LOGOUT ----------
+@app.route('/logout')
 def logout():
-    session.clear()
-    flash("You’ve been logged out.")
-    return redirect(url_for("home"))
+    session.pop('user', None)
+    session.pop('cart', None)
+    return redirect(url_for('login'))
 
-
-@app.route("/sell", methods=["GET", "POST"])
+# ---------- SELL ----------
+@app.route('/sell', methods=['GET', 'POST'])
+@login_required
 def sell():
-    if "user_id" not in session:
-        flash("Please log in first.")
-        return redirect(url_for("login"))
+    if request.method == 'POST':
+        name = request.form['name']
+        price = int(request.form['price'])
+        photo = request.files.get('photo')
+        photo_path = None
 
-    if request.method == "POST":
-        name = request.form["name"]
-        description = request.form["description"]
-        price = float(request.form["price"])
-        photo = request.files["photo"]
-
-        if photo:
+        if photo and allowed_file(photo.filename):
+            os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
             filename = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{secure_filename(photo.filename)}"
-            upload_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
-            photo.save(upload_path)
+            photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            # Fix: store relative path only (not static/static)
             photo_path = f"uploads/{filename}"
-        else:
-            flash("Please upload a photo.")
-            return redirect(url_for("sell"))
 
-        new_item = Item(
-            name=name,
-            description=description,
-            price=price,
-            photo=photo_path,
-            seller_id=session["user_id"]
-        )
-
+        user = User.query.filter_by(email=session['user']).first()
+        new_item = Item(name=name, price=price, photo=photo_path, seller_id=user.id)
         db.session.add(new_item)
         db.session.commit()
         flash("Item listed successfully!")
-        return redirect(url_for("home"))
+        return redirect(url_for('index'))
 
-    return render_template("sell.html")
+    return render_template('sell.html')
 
+# ---------- BUY ----------
+@app.route('/buy')
+@login_required
+def buy():
+    user = User.query.filter_by(email=session['user']).first()
+    items = Item.query.filter(Item.seller_id != user.id).all()
+    return render_template('buy.html', items=items)
 
-@app.route("/buy-now/<int:item_id>")
+# ---------- ADD TO CART ----------
+@app.route('/add-to-cart/<int:item_id>')
+@login_required
+def add_to_cart(item_id):
+    item = Item.query.get_or_404(item_id)
+    if 'cart' not in session:
+        session['cart'] = []
+    session['cart'].append({'id': item.id, 'name': item.name, 'price': item.price, 'seller': item.seller.email})
+    session.modified = True
+    flash(f"{item.name} added to cart!")
+    return redirect(url_for('buy'))
+
+# ---------- BUY NOW (Fixed Missing Route) ----------
+@app.route('/buy-now/<int:item_id>')
+@login_required
 def buy_now(item_id):
     item = Item.query.get_or_404(item_id)
-    session["cart"] = [{
-        "id": item.id,
-        "name": item.name,
-        "price": item.price,
-        "seller": item.seller.email
-    }]
-    flash("Item added to cart. Proceed to buy.")
-    return redirect(url_for("buy"))
+    session['cart'] = [{'id': item.id, 'name': item.name, 'price': item.price, 'seller': item.seller.email}]
+    session.modified = True
+    return redirect(url_for('checkout'))
 
+# ---------- REMOVE FROM CART ----------
+@app.route('/remove-from-cart/<int:item_id>')
+@login_required
+def remove_from_cart(item_id):
+    if 'cart' in session:
+        session['cart'] = [item for item in session['cart'] if item['id'] != item_id]
+        session.modified = True
+        flash("Item removed from cart!")
+    return redirect(url_for('cart'))
 
-@app.route("/buy")
-def buy():
-    cart = session.get("cart", [])
-    return render_template("buy.html", cart=cart)
+# ---------- CART ----------
+@app.route('/cart')
+@login_required
+def cart():
+    cart_items = session.get('cart', [])
+    total = sum(item['price'] for item in cart_items)
+    return render_template('cart.html', cart=cart_items, total=total)
 
+# ---------- CHECKOUT ----------
+@app.route('/checkout', methods=['GET'])
+@login_required
+def checkout():
+    cart_items = session.get('cart', [])
+    if not cart_items:
+        flash("Cart is empty!")
+        return redirect(url_for('buy'))
+    total = sum(item['price'] for item in cart_items)
+    return render_template('checkout.html', cart=cart_items, total=total)
 
-# ------------------ MAIN ------------------
+# ---------- PROCESS ORDER ----------
+@app.route('/process_order', methods=['POST'])
+@login_required
+def process_order():
+    cart_items = session.get('cart', [])
+    if not cart_items:
+        flash("Cart is empty!")
+        return redirect(url_for('cart'))
 
-if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
-    app.run(debug=True)
+    payment_method = request.form.get('payment_method')
+    if not payment_method:
+        flash("Please select a payment method!")
+        return redirect(url_for('checkout'))
+
+    upi_id = request.form.get('upi_id') if payment_method == 'upi' else None
+
+    order_summary = {
+        'items': cart_items,
+        'total': sum(item.get('price', 0) for item in cart_items),
+        'payment_method': payment_method,
+        'upi_id': upi_id
+    }
+
+    session['cart'] = []
+    flash("Order placed successfully!")
+
+    return render_template('order_confirmation.html', order=order_summary)
+
+# ---------- RUN ----------
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=False)
