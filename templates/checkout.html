@@ -4,8 +4,112 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Checkout | CAMPUS-CART</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8fafc;
+      color: #333;
+    }
+
+    header {
+      background: #007bff;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    header h1 {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.6rem;
+    }
+
+    nav a {
+      color: white;
+      margin-left: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    main {
+      max-width: 700px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #007bff;
+      margin-bottom: 2rem;
+    }
+
+    .cart-summary {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .cart-summary div {
+      display: flex;
+      justify-content: space-between;
+      font-size: 1rem;
+    }
+
+    .total {
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: #c67b3e;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    input[type="text"] {
+      padding: 0.8rem;
+      border-radius: 0.5rem;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    button {
+      background: #c67b3e;
+      color: white;
+      border: none;
+      padding: 0.8rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #a65f2d;
+    }
+
+    @media (max-width: 768px) {
+      main {
+        width: 90%;
+        padding: 1.5rem;
+      }
+    }
+  </style>
 </head>
 <body>
 
@@ -13,58 +117,39 @@
   <header>
     <h1><i class="fas fa-credit-card"></i> Checkout</h1>
     <nav>
-      <a href="/buy"><i class="fas fa-arrow-left"></i> Back to Buy</a>
+      <a href="/"><i class="fas fa-home"></i> Home</a>
+      <a href="/buy"><i class="fas fa-shopping-cart"></i> Buy</a>
+      <a href="/your-listings"><i class="fas fa-list"></i> Your Listings</a>
       <a href="/cart"><i class="fas fa-cart-shopping"></i> Cart</a>
       <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </nav>
   </header>
 
-  <!-- Main Section -->
   <main>
-    <section class="cart-container">
-      <h2 style="text-align:center;margin-bottom:1rem;">Order Summary</h2>
+    <h2>Order Summary</h2>
 
-      {% if cart and cart|length > 0 %}
-      <table>
-        <thead>
-          <tr>
-            <th>Item</th>
-            <th>Seller</th>
-            <th>Price</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for item in cart %}
-          <tr>
-            <td>{{ item.name }}</td>
-            <td>{{ item.seller }}</td>
-            <td>₹ {{ "%.2f"|format(item.price / 100) }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-        <tfoot>
-          <tr>
-            <td colspan="2" style="text-align:right;font-weight:600;">Total:</td>
-            <td style="font-weight:600;">₹ {{ "%.2f"|format(total / 100) }}</td>
-          </tr>
-        </tfoot>
-      </table>
+    <div class="cart-summary">
+      {% for item in cart %}
+        <div>
+          <span>{{ item.name }} (₹ {{ "%.2f"|format(item.price / 100) }})</span>
+          <span>Seller: {{ item.seller }}</span>
+        </div>
+      {% endfor %}
+      <div class="total">Total: ₹ {{ "%.2f"|format(total / 100) }}</div>
+    </div>
 
-      <div style="text-align:center;">
-        <a href="/confirm" class="checkout-btn">
-          <i class="fas fa-lock"></i> Confirm & Pay
-        </a>
-      </div>
-      {% else %}
-      <p style="text-align:center;">Your cart is empty. <a href="/buy" style="color:var(--primary);text-decoration:none;font-weight:600;">Go Shopping</a></p>
-      {% endif %}
-    </section>
+    <form action="/process_order" method="POST">
+      <label for="payment_method">Select Payment Method:</label>
+      <select name="payment_method" id="payment_method" required>
+        <option value="">--Choose--</option>
+        <option value="upi">UPI</option>
+        <option value="card">Card</option>
+        <option value="cod">Cash on Delivery</option>
+      </select>
+      <input type="text" name="upi_id" placeholder="Enter UPI ID (if UPI selected)">
+      <button type="submit"><i class="fas fa-check-circle"></i> Place Order</button>
+    </form>
   </main>
-
-  <!-- Footer -->
-  <footer>
-    <p>&copy; 2025 CAMPUS-CART | Built for Students, by Students</p>
-  </footer>
 
 </body>
 </html>

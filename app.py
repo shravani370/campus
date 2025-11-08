@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template, session, redirect, url_for, flash
+from flask import Flask, request, render_template, session, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from functools import wraps
 import os
@@ -45,11 +45,11 @@ def login_required(f):
     return decorated_function
 
 # ---------------------- ROUTES ----------------------
+# Home redirects to Buy Items page
 @app.route('/')
 @login_required
-def index():
-    user = User.query.filter_by(email=session['user']).first()
-    return render_template('listings.html', user_items=user.items if user else [])
+def home():
+    return redirect(url_for('buy'))
 
 # ---------- LOGIN ----------
 @app.route('/login', methods=['GET', 'POST'])
@@ -71,7 +71,7 @@ def login():
             session['user'] = email
             session['cart'] = []
             flash('Login successful!')
-            return redirect(url_for('buy'))
+            return redirect(url_for('home'))
         else:
             return render_template('login.html', error='Invalid password')
 
@@ -105,7 +105,7 @@ def sell():
         db.session.add(new_item)
         db.session.commit()
         flash("Item listed successfully!")
-        return redirect(url_for('index'))
+        return redirect(url_for('your_listings'))
 
     return render_template('sell.html')
 
@@ -117,13 +117,12 @@ def your_listings():
     user_items = user.items if user else []
     return render_template('listings.html', user_items=user_items)
 
-
 # ---------- BUY ----------
 @app.route('/buy')
 @login_required
 def buy():
     user = User.query.filter_by(email=session['user']).first()
-    items = Item.query.filter(Item.seller_id != user.id).all() if user else []
+    items = Item.query.filter(Item.seller_id != user.id).all()
     return render_template('buy.html', items=items)
 
 # ---------- ADD TO CART ----------
@@ -133,19 +132,20 @@ def add_to_cart(item_id):
     item = Item.query.get_or_404(item_id)
     if 'cart' not in session:
         session['cart'] = []
+    # Store item details in session
     session['cart'].append({
         'id': item.id,
         'name': item.name,
         'price': item.price,
         'seller': item.seller.email,
-        'photo': item.photo
+        'image_url': url_for('static', filename=item.photo) if item.photo else None
     })
     session.modified = True
     flash(f"{item.name} added to cart!")
     return redirect(url_for('buy'))
 
 # ---------- REMOVE FROM CART ----------
-@app.route('/remove-from-cart/<int:item_id>')
+@app.route('/remove-from-cart/<int:item_id>', methods=['POST'])
 @login_required
 def remove_from_cart(item_id):
     if 'cart' in session:
@@ -163,7 +163,7 @@ def cart():
     return render_template('cart.html', cart_items=cart_items, total=total)
 
 # ---------- CHECKOUT ----------
-@app.route('/checkout')
+@app.route('/checkout', methods=['GET'])
 @login_required
 def checkout():
     cart_items = session.get('cart', [])
@@ -183,15 +183,11 @@ def process_order():
         return redirect(url_for('cart'))
 
     payment_method = request.form.get('payment_method')
-    if not payment_method:
-        flash("Please select a payment method!")
-        return redirect(url_for('checkout'))
-
     upi_id = request.form.get('upi_id') if payment_method == 'upi' else None
 
     order_summary = {
         'items': cart_items,
-        'total': sum(item.get('price', 0) for item in cart_items),
+        'total': sum(item['price'] for item in cart_items),
         'payment_method': payment_method,
         'upi_id': upi_id
     }

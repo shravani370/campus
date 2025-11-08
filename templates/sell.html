@@ -3,221 +3,95 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CAMPUS-CART - Sell Item</title>
+  <title>Sell Item | CAMPUS-CART</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
   <style>
-    :root {
-      --primary: #007bff;
-      --primary-dark: #0056b3;
-      --accent: #c67b3e;
-      --text-dark: #222;
-      --text-light: #fff;
-      --bg-light: #f8fafc;
-      --shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
     body {
+      margin: 0;
       font-family: 'Poppins', sans-serif;
-      background: var(--bg-light);
-      color: var(--text-dark);
-      min-height: 100vh;
+      background-color: #f8fafc;
+      color: #333;
     }
 
-    /* ---------- Header ---------- */
     header {
-      background: var(--primary);
-      color: var(--text-light);
+      background: #007bff;
+      color: white;
       padding: 1rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: var(--shadow);
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      flex-wrap: wrap;
     }
 
     header h1 {
-      font-size: 1.5rem;
-      font-weight: 600;
+      margin: 0;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 0.5rem;
+      font-size: 1.6rem;
     }
 
-    header a {
-      text-decoration: none;
-      color: var(--text-light);
-      font-weight: 500;
-      transition: 0.3s;
+    nav a {
+      color: white;
+      margin-left: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
     }
 
-    header a:hover {
-      color: #ffd700;
-    }
-
-    /* ---------- Page Title ---------- */
-    h2 {
-      text-align: center;
-      font-size: 2.2rem;
-      margin-top: 2rem;
-      color: var(--primary-dark);
-      position: relative;
-      text-transform: uppercase;
-    }
-
-    h2::after {
-      content: "";
-      width: 80px;
-      height: 4px;
-      background: var(--accent);
-      display: block;
-      margin: 10px auto;
-      border-radius: 2px;
-    }
-
-    /* ---------- Form Section ---------- */
-    .sell-form {
-      background: white;
-      width: 90%;
+    main {
       max-width: 600px;
       margin: 2rem auto;
-      padding: 2.5rem;
+      background: white;
+      padding: 2rem;
       border-radius: 1rem;
-      box-shadow: var(--shadow);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #007bff;
+      margin-bottom: 1.5rem;
+    }
+
+    form {
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      gap: 1rem;
     }
 
-    .sell-form label {
-      font-size: 1rem;
-      font-weight: 500;
-      margin-bottom: 0.3rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .sell-form input[type="text"],
-    .sell-form input[type="number"],
-    .sell-form input[type="file"] {
-      width: 100%;
-      height: 2.7rem;
-      border: 2px solid #ccc;
+    input, button {
+      padding: 0.8rem;
       border-radius: 0.5rem;
-      padding-left: 0.6rem;
+      border: 1px solid #ccc;
       font-size: 1rem;
-      transition: 0.2s;
     }
 
-    .sell-form input:focus {
-      border-color: var(--primary);
-      outline: none;
-      box-shadow: 0 0 6px rgba(0, 123, 255, 0.3);
-    }
-
-    .file-input-container {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      width: 100%;
-    }
-
-    .file-input-container input[type="file"] {
-      background: #f1f1f1;
-      padding: 0.5rem;
-      cursor: pointer;
-      border: 1px solid #ddd;
-    }
-
-    .file-input-container input[type="file"]::-webkit-file-upload-button {
-      background: var(--primary);
+    button {
+      background: #007bff;
       color: white;
       border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 0.4rem;
+      font-weight: 600;
       cursor: pointer;
       transition: 0.3s;
     }
 
-    .file-input-container input[type="file"]::-webkit-file-upload-button:hover {
-      background: var(--primary-dark);
+    button:hover {
+      background: #0056b3;
     }
 
-    /* ---------- Submit Button ---------- */
-    .checkout-btn {
-      background: var(--accent);
-      color: var(--text-light);
-      font-size: 1.1rem;
-      border: none;
-      padding: 0.9rem 2rem;
-      border-radius: 0.6rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      align-self: center;
-    }
-
-    .checkout-btn:hover {
-      background: #a85f26;
-      transform: scale(1.05);
-    }
-
-    /* ---------- Footer ---------- */
-    footer {
-      background: var(--primary-dark);
-      color: var(--text-light);
+    .flash-message {
       text-align: center;
-      padding: 1rem 0;
-      margin-top: 3rem;
-      font-size: 0.9rem;
+      color: green;
+      margin-bottom: 1rem;
     }
 
-    /* ---------- Responsive Design ---------- */
     @media (max-width: 768px) {
-      header h1 {
-        font-size: 1.3rem;
-      }
-
-      h2 {
-        font-size: 1.8rem;
-      }
-
-      .sell-form {
-        padding: 1.8rem;
-      }
-
-      .checkout-btn {
-        width: 100%;
-      }
-    }
-
-    @media (max-width: 480px) {
-      header {
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-
-      h2 {
-        font-size: 1.6rem;
-      }
-
-      .sell-form {
-        width: 95%;
+      main {
+        width: 90%;
         padding: 1.5rem;
-      }
-
-      input[type="text"],
-      input[type="number"] {
-        font-size: 0.9rem;
       }
     }
   </style>
@@ -226,34 +100,31 @@
 
   <!-- Header -->
   <header>
-    <h1><i class="fas fa-university"></i> CAMPUS-CART</h1>
-    <a href="/"><i class="fas fa-home"></i> Home</a>
+    <h1><i class="fas fa-plus-circle"></i> Sell Item</h1>
+    <nav>
+      <a href="/"><i class="fas fa-home"></i> Home</a>
+      <a href="/buy"><i class="fas fa-shopping-cart"></i> Buy</a>
+      <a href="/your-listings"><i class="fas fa-list"></i> Your Listings</a>
+      <a href="/cart"><i class="fas fa-cart-shopping"></i> Cart</a>
+      <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </nav>
   </header>
 
-  <!-- Main Section -->
+  <!-- Main Form -->
   <main>
-    <h2><i class="fas fa-plus"></i> Sell Your Item</h2>
-
-    <form method="POST" enctype="multipart/form-data" class="sell-form">
-      <label for="name"><i class="fas fa-tag"></i> Item Name:</label>
-      <input type="text" id="name" name="name" required placeholder="Enter item name">
-
-      <label for="price"><i class="fas fa-rupee-sign"></i> Price (in ₹):</label>
-      <input type="number" id="price" name="price" required placeholder="Enter item price">
-
-      <div class="file-input-container">
-        <label for="photo"><i class="fas fa-camera"></i> Upload Photo:</label>
-        <input type="file" id="photo" name="photo" accept="image/*">
-      </div>
-
-      <button type="submit" class="checkout-btn"><i class="fas fa-upload"></i> List Item</button>
+    <h2>List Your Product</h2>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flash-message">{{ messages[0] }}</div>
+      {% endif %}
+    {% endwith %}
+    <form action="/sell" method="POST" enctype="multipart/form-data">
+      <input type="text" name="name" placeholder="Item Name" required>
+      <input type="number" name="price" placeholder="Price in ₹" required min="1">
+      <input type="file" name="photo" accept="image/*">
+      <button type="submit"><i class="fas fa-upload"></i> List Item</button>
     </form>
   </main>
-
-  <!-- Footer -->
-  <footer>
-    <p>&copy; 2025 CAMPUS-CART | Connecting Students through Campus Marketplace</p>
-  </footer>
 
 </body>
 </html>
