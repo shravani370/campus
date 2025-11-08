@@ -109,6 +109,15 @@ def sell():
 
     return render_template('sell.html')
 
+# ---------- YOUR LISTINGS ----------
+@app.route('/your-listings')
+@login_required
+def your_listings():
+    user = User.query.filter_by(email=session['user']).first()
+    user_items = user.items if user else []
+    return render_template('listings.html', user_items=user_items)
+
+
 # ---------- BUY ----------
 @app.route('/buy')
 @login_required
