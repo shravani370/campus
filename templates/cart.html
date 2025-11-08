@@ -32,7 +32,7 @@
           <tr style="border-bottom:1px solid #ccc;">
             <td style="padding:1rem;">{{ item.name }}</td>
             <td style="padding:1rem;">{{ item.seller }}</td>
-            <td style="padding:1rem;">₹ {{ "%.2f"|format(item.price / 100) }}</td>
+            <td style="padding:1rem;">₹ {{ "%.2f"|format(item.price) }}</td>
             <td style="padding:1rem;">
               <a href="{{ url_for('remove_from_cart', item_id=item.id) }}"
                  style="color:white;background-color:red;padding:0.5rem 1rem;border-radius:1rem;text-decoration:none;font-size:0.9rem;"
@@ -47,7 +47,7 @@
         <tfoot style="background-color:#f5f5f5;font-weight:600;">
           <tr>
             <td colspan="2" style="padding:1rem;text-align:right;">Total:</td>
-            <td style="padding:1rem;">₹ {{ "%.2f"|format(total / 100) }}</td>
+            <td style="padding:1rem;">₹ {{ "%.2f"|format(total) }}</td>
             <td></td>
           </tr>
         </tfoot>

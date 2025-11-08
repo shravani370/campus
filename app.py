@@ -15,7 +15,7 @@ db = SQLAlchemy(app)
 
 ALLOWED_DOMAIN = 'sggs.ac.in'
 
-# Models
+# ---------------------- MODELS ----------------------
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -32,6 +32,7 @@ class Item(db.Model):
 with app.app_context():
     db.create_all()
 
+# ---------------------- HELPERS ----------------------
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
@@ -43,7 +44,7 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-# Routes
+# ---------------------- ROUTES ----------------------
 @app.route('/')
 @login_required
 def index():
@@ -51,6 +52,7 @@ def index():
     user_items = Item.query.filter_by(seller_id=user.id).all() if user else []
     return render_template('index.html', user_items=user_items)
 
+# ---------- LOGIN ----------
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -76,12 +78,14 @@ def login():
 
     return render_template('login.html')
 
+# ---------- LOGOUT ----------
 @app.route('/logout')
 def logout():
     session.pop('user', None)
     session.pop('cart', None)
     return redirect(url_for('login'))
 
+# ---------- SELL ----------
 @app.route('/sell', methods=['GET', 'POST'])
 @login_required
 def sell():
@@ -106,6 +110,7 @@ def sell():
 
     return render_template('sell.html')
 
+# ---------- BUY ----------
 @app.route('/buy')
 @login_required
 def buy():
@@ -113,6 +118,7 @@ def buy():
     items = Item.query.filter(Item.seller_id != user.id).all()
     return render_template('buy.html', items=items)
 
+# ---------- ADD TO CART ----------
 @app.route('/add-to-cart/<int:item_id>')
 @login_required
 def add_to_cart(item_id):
@@ -124,6 +130,17 @@ def add_to_cart(item_id):
     flash(f"{item.name} added to cart!")
     return redirect(url_for('buy'))
 
+# ---------- REMOVE FROM CART ----------
+@app.route('/remove-from-cart/<int:item_id>')
+@login_required
+def remove_from_cart(item_id):
+    if 'cart' in session:
+        session['cart'] = [item for item in session['cart'] if item['id'] != item_id]
+        session.modified = True
+        flash("Item removed from cart!")
+    return redirect(url_for('cart'))
+
+# ---------- CART ----------
 @app.route('/cart')
 @login_required
 def cart():
@@ -131,6 +148,7 @@ def cart():
     total = sum(item['price'] for item in cart_items)
     return render_template('cart.html', cart=cart_items, total=total)
 
+# ---------- CHECKOUT ----------
 @app.route('/checkout', methods=['GET'])
 @login_required
 def checkout():
@@ -141,6 +159,7 @@ def checkout():
     total = sum(item['price'] for item in cart_items)
     return render_template('checkout.html', cart=cart_items, total=total)
 
+# ---------- PROCESS ORDER ----------
 @app.route('/process_order', methods=['POST'])
 @login_required
 def process_order():
@@ -168,5 +187,6 @@ def process_order():
 
     return render_template('order_confirmation.html', order=order_summary)
 
+# ---------- RUN ----------
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=False)
