@@ -1,66 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CAMPUS-CART - Checkout</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-<style>
-.container {max-width:600px; margin:auto; background:white; padding:2rem; border-radius:1rem; box-shadow:0 5px 15px rgba(0,0,0,0.2);}
-.checkout-btn {margin-top:1.5rem; width:100%; padding:1rem; border:none; border-radius:2rem; background:#c67b3e; color:white; font-size:1.2rem; font-weight:600; cursor:pointer; transition:0.3s;}
-.checkout-btn:hover {background:#007bff; transform:scale(1.05);}
-#payment-message {margin-top:1rem; font-weight:600;}
-input[type="text"] {width:100%; padding:0.8rem; border:2px solid #000; border-radius:0.5rem; margin-top:0.5rem;}
-.payment-option {margin:1rem 0; display:flex; flex-direction:column; text-align:left;}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout | CAMPUS-CART</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body style="background:#8bc3ff;font-family:'Poppins',sans-serif;margin:0;">
-<header style="display:flex; justify-content:space-between; align-items:center; background:#004aad; color:white; padding:1rem 2rem;">
-<h1><i class="fas fa-university"></i> CAMPUS-CART</h1>
-<a href="/cart" style="color:white;text-decoration:none;"><i class="fas fa-arrow-left"></i> Back to Cart</a>
-</header>
+<body>
 
-<main style="padding:2rem;text-align:center;">
-<div class="container">
-<h2 style="margin-bottom:1.5rem;"><i class="fas fa-credit-card"></i> Checkout</h2>
+  <!-- Header -->
+  <header>
+    <h1><i class="fas fa-credit-card"></i> Checkout</h1>
+    <nav>
+      <a href="/buy"><i class="fas fa-arrow-left"></i> Back to Buy</a>
+      <a href="/cart"><i class="fas fa-cart-shopping"></i> Cart</a>
+      <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </nav>
+  </header>
 
-{% if cart %}
-<div id="cart-summary" style="text-align:left;">
-<h3>Items:</h3>
-<ul>
-  {% for item in cart %}
-  <li>{{ item.name }} - ₹ {{ "%.2f"|format(item.price / 100) }} ({{ item.seller }})</li>
-  {% endfor %}
-</ul>
-<h3>Total: ₹ {{ "%.2f"|format(total / 100) }}</h3>
-</div>
+  <!-- Main Section -->
+  <main>
+    <section class="cart-container">
+      <h2 style="text-align:center;margin-bottom:1rem;">Order Summary</h2>
 
-<form id="checkout-form" method="POST" action="{{ url_for('process_order') }}">
-  <div class="payment-option">
-    <label><input type="radio" name="payment_method" value="cod" checked> Cash on Delivery (COD)</label>
-    <label style="margin-top:0.5rem;"><input type="radio" name="payment_method" value="upi"> Pay via UPI</label>
-    <input type="text" name="upi_id" placeholder="Enter your UPI ID" id="upi-input" style="display:none;">
-  </div>
-  <button type="submit" class="checkout-btn"><i class="fas fa-lock"></i> Place Order</button>
-</form>
+      {% if cart and cart|length > 0 %}
+      <table>
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Seller</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in cart %}
+          <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.seller }}</td>
+            <td>₹ {{ "%.2f"|format(item.price / 100) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="2" style="text-align:right;font-weight:600;">Total:</td>
+            <td style="font-weight:600;">₹ {{ "%.2f"|format(total / 100) }}</td>
+          </tr>
+        </tfoot>
+      </table>
 
-<div id="payment-message"></div>
+      <div style="text-align:center;">
+        <a href="/confirm" class="checkout-btn">
+          <i class="fas fa-lock"></i> Confirm & Pay
+        </a>
+      </div>
+      {% else %}
+      <p style="text-align:center;">Your cart is empty. <a href="/buy" style="color:var(--primary);text-decoration:none;font-weight:600;">Go Shopping</a></p>
+      {% endif %}
+    </section>
+  </main>
 
-<script>
-const upiRadio = document.querySelector('input[value="upi"]');
-const codRadio = document.querySelector('input[value="cod"]');
-const upiInput = document.getElementById('upi-input');
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 CAMPUS-CART | Built for Students, by Students</p>
+  </footer>
 
-upiRadio.addEventListener('change', () => upiInput.style.display='block');
-codRadio.addEventListener('change', () => upiInput.style.display='none');
-</script>
-
-{% else %}
-<p>Your cart is empty. <a href="/buy" style="color:#004aad;">Go back to buy items.</a></p>
-{% endif %}
-</div>
-</main>
 </body>
 </html>

@@ -3,64 +3,74 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CAMPUS-CART - Cart</title>
+  <title>Your Cart | CAMPUS-CART</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
-<body style="background-color:#8bc3ff;margin:0;font-family:'Poppins',sans-serif;">
-  <header style="display:flex;justify-content:space-between;align-items:center;background-color:#004aad;color:white;padding:1rem 2rem;">
-    <h1 style="margin:0;"><i class="fas fa-shopping-cart"></i> CAMPUS-CART</h1>
-    <a href="/buy" style="color:white;text-decoration:none;"><i class="fas fa-arrow-left"></i> Back to Products</a>
+<body>
+  <!-- Header -->
+  <header>
+    <h1><i class="fas fa-university"></i> CAMPUS-CART</h1>
+    <nav>
+      <a href="{{ url_for('buy') }}"><i class="fas fa-arrow-left"></i> Back to Products</a>
+    </nav>
   </header>
 
-  <main style="padding:2rem;text-align:center;">
-    <h2><i class="fas fa-shopping-cart"></i> Your Cart</h2>
+  <!-- Main Content -->
+  <main>
+    <section class="cart-section">
+      <h2><i class="fas fa-shopping-cart"></i> Your Cart</h2>
 
-    {% if cart and cart|length > 0 %}
-      <table style="margin:auto;border-collapse:collapse;width:80%;background:white;border-radius:1rem;overflow:hidden;">
-        <thead style="background-color:#004aad;color:white;">
-          <tr>
-            <th style="padding:1rem;">Item</th>
-            <th style="padding:1rem;">Seller</th>
-            <th style="padding:1rem;">Price</th>
-            <th style="padding:1rem;">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for item in cart %}
-          <tr style="border-bottom:1px solid #ccc;">
-            <td style="padding:1rem;">{{ item.name }}</td>
-            <td style="padding:1rem;">{{ item.seller }}</td>
-            <td style="padding:1rem;">₹ {{ "%.2f"|format(item.price) }}</td>
-            <td style="padding:1rem;">
-              <a href="{{ url_for('remove_from_cart', item_id=item.id) }}"
-                 style="color:white;background-color:red;padding:0.5rem 1rem;border-radius:1rem;text-decoration:none;font-size:0.9rem;"
-                 onmouseover="this.style.backgroundColor='#c0392b'"
-                 onmouseout="this.style.backgroundColor='red'">
-                 Remove
-              </a>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-        <tfoot style="background-color:#f5f5f5;font-weight:600;">
-          <tr>
-            <td colspan="2" style="padding:1rem;text-align:right;">Total:</td>
-            <td style="padding:1rem;">₹ {{ "%.2f"|format(total) }}</td>
-            <td></td>
-          </tr>
-        </tfoot>
-      </table>
-      <a href="/checkout"
-         style="display:inline-block;margin-top:2rem;padding:1rem 2rem;background-color:#c67b3e;color:white;border-radius:2rem;text-decoration:none;font-size:1.1rem;font-weight:600;"
-         onmouseover="this.style.backgroundColor='#007bff';this.style.transform='scale(1.05)'"
-         onmouseout="this.style.backgroundColor='#c67b3e';this.style.transform='scale(1)'">
-         <i class="fas fa-credit-card"></i> Proceed to Checkout
-      </a>
-    {% else %}
-      <p style="font-size:1.2rem;">Your cart is empty.</p>
-    {% endif %}
+      {% if cart and cart|length > 0 %}
+      <div class="cart-table-wrapper">
+        <table class="cart-table">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Seller</th>
+              <th>Price</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in cart %}
+            <tr>
+              <td data-label="Item">{{ item.name }}</td>
+              <td data-label="Seller">{{ item.seller }}</td>
+              <td data-label="Price">₹ {{ item.price }}</td>
+              <td data-label="Action">
+                <a href="{{ url_for('remove_from_cart', item_id=item.id) }}" class="btn btn-danger">
+                  <i class="fas fa-trash"></i> Remove
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="2"></td>
+              <td><strong>Total:</strong></td>
+              <td><strong>₹ {{ total }}</strong></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div class="checkout-container">
+        <a href="{{ url_for('checkout') }}" class="btn btn-primary">
+          <i class="fas fa-credit-card"></i> Proceed to Checkout
+        </a>
+      </div>
+      {% else %}
+        <p class="empty-cart">Your cart is empty.</p>
+      {% endif %}
+    </section>
   </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 Campus-Cart. All rights reserved.</p>
+  </footer>
 </body>
 </html>
