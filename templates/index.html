@@ -9,29 +9,46 @@
 </head>
 
 <body style="background-color:#8bc3ff;margin:0;font-family:'Poppins',sans-serif;">
-  <header style="display:flex;justify-content:space-between;align-items:center;padding:1rem 2rem;background-color:#004aad;color:white;">
-    <h1><i class="fas fa-university"></i> CAMPUS-CART</h1>
-    <div style="display:flex;gap:1.5rem;align-items:center;">
-      {% if session.user %}
-        <a href="/logout" style="color:white;text-decoration:none;"><i class="fas fa-sign-out-alt"></i> Logout ({{ session.user }})</a>
-      {% else %}
-        <a href="/login" style="color:white;text-decoration:none;"><i class="fas fa-sign-in-alt"></i> Login</a>
-      {% endif %}
-      <a href="/cart" style="color:white;text-decoration:none;"><i class="fas fa-shopping-cart"></i> Cart</a>
+
+  <!-- HEADER -->
+  <header style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;background-color:#004aad;color:white;padding:1rem 2rem;box-shadow:0 4px 12px rgba(0,0,0,0.15);position:sticky;top:0;z-index:10;">
+    <div style="font-size:1.5rem;font-weight:600;display:flex;align-items:center;gap:8px;">
+      <i class="fas fa-university"></i> CAMPUS-CART
     </div>
+    <nav style="display:flex;flex-wrap:wrap;gap:1.2rem;align-items:center;">
+      <a href="/" style="color:white;text-decoration:none;font-weight:500;display:flex;align-items:center;gap:5px;"><i class="fas fa-home"></i> Home</a>
+      <a href="/buy" style="color:white;text-decoration:none;font-weight:500;display:flex;align-items:center;gap:5px;"><i class="fas fa-shopping-bag"></i> Buy</a>
+      <a href="/sell" style="color:white;text-decoration:none;font-weight:500;display:flex;align-items:center;gap:5px;"><i class="fas fa-plus-circle"></i> Sell</a>
+      <a href="/listings" style="color:white;text-decoration:none;font-weight:500;display:flex;align-items:center;gap:5px;"><i class="fas fa-list"></i> Listings</a>
+      <a href="/cart" style="color:white;text-decoration:none;font-weight:500;display:flex;align-items:center;gap:5px;"><i class="fas fa-cart-shopping"></i> Cart</a>
+      {% if session.user %}
+        <a href="/logout" style="background-color:#c67b3e;color:white;text-decoration:none;font-weight:500;padding:0.5rem 1rem;border-radius:0.5rem;display:flex;align-items:center;gap:5px;"><i class="fas fa-sign-out-alt"></i> Logout ({{ session.user }})</a>
+      {% else %}
+        <a href="/login" style="color:white;text-decoration:none;font-weight:500;display:flex;align-items:center;gap:5px;"><i class="fas fa-sign-in-alt"></i> Login</a>
+      {% endif %}
+    </nav>
   </header>
 
-  <main style="text-align:center;padding-top:5rem;">
-    <h2 style="font-size:2rem;">Welcome to CAMPUS-CART</h2>
-    <p>Buy and sell campus essentials with ease!</p>
+  <!-- MAIN -->
+  <main style="text-align:center;padding:5rem 1rem;">
+    <h2 style="font-size:2rem;margin-bottom:0.8rem;">Welcome to CAMPUS-CART</h2>
+    <p style="font-size:1.1rem;color:#222;">Buy and sell campus essentials with ease!</p>
 
     {% if session.user %}
-    <div style="margin-top:3rem;display:flex;justify-content:center;gap:3rem;">
-      <a href="/buy" style="background-color:#c67b3e;color:white;padding:1rem 2rem;border-radius:2rem;text-decoration:none;font-size:1.2rem;font-weight:600;"><i class="fas fa-shopping-bag"></i> Buy Items</a>
-      <a href="/sell" style="background-color:#c67b3e;color:white;padding:1rem 2rem;border-radius:2rem;text-decoration:none;font-size:1.2rem;font-weight:600;"><i class="fas fa-plus"></i> Sell Items</a>
-      <a href="/listings" style="background-color:#c67b3e;color:white;padding:1rem 2rem;border-radius:2rem;text-decoration:none;font-size:1.2rem;font-weight:600;"><i class="fas fa-list"></i> Your Listings</a>
+    <div style="margin-top:3rem;display:flex;flex-wrap:wrap;justify-content:center;gap:2rem;">
+      <a href="/buy" style="background-color:#c67b3e;color:white;padding:1rem 2rem;border-radius:2rem;text-decoration:none;font-size:1.1rem;font-weight:600;box-shadow:0 4px 8px rgba(0,0,0,0.2);transition:0.3s;"><i class="fas fa-shopping-bag"></i> Buy Items</a>
+      <a href="/sell" style="background-color:#c67b3e;color:white;padding:1rem 2rem;border-radius:2rem;text-decoration:none;font-size:1.1rem;font-weight:600;box-shadow:0 4px 8px rgba(0,0,0,0.2);transition:0.3s;"><i class="fas fa-plus"></i> Sell Items</a>
+      <a href="/listings" style="background-color:#c67b3e;color:white;padding:1rem 2rem;border-radius:2rem;text-decoration:none;font-size:1.1rem;font-weight:600;box-shadow:0 4px 8px rgba(0,0,0,0.2);transition:0.3s;"><i class="fas fa-list"></i> Your Listings</a>
     </div>
+    {% else %}
+      <p style="margin-top:2rem;font-size:1rem;color:#333;">Please <a href="/login" style="color:#004aad;font-weight:600;text-decoration:none;">login</a> to access full features.</p>
     {% endif %}
   </main>
+
+  <!-- FOOTER -->
+  <footer style="background-color:#004aad;color:white;text-align:center;padding:1rem 0;font-size:0.9rem;">
+    <p style="margin:0;">&copy; 2025 CAMPUS-CART | Connecting Students through Campus Marketplace</p>
+  </footer>
+
 </body>
 </html>
