@@ -49,7 +49,7 @@ def login_required(f):
 @app.route('/')
 @login_required
 def home():
-    return redirect(url_for('buy'))
+    return redirect(url_for('index'))
 
 # ---------- LOGIN ----------
 @app.route('/login', methods=['GET', 'POST'])
