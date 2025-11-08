@@ -1,81 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Buy Items | CAMPUS-CART</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-  <style>
-    body {margin:0;font-family:'Poppins',sans-serif;background:#f8fafc;}
-    a {text-decoration:none;}
-    header {background:#007bff;color:white;padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;}
-    header h1 {margin:0;display:flex;align-items:center;gap:0.5rem;font-size:1.6rem;}
-    nav a {color:white;margin-left:1rem;display:inline-flex;align-items:center;gap:0.3rem;transition:0.2s;}
-    nav a:hover {opacity:0.8;}
-    .hero {background:linear-gradient(135deg,#007bff,#0056b3);color:white;padding:4rem 2rem;text-align:center;}
-    .hero h2 {font-size:2.5rem;margin-bottom:1rem;font-weight:600;}
-    .hero p {font-size:1.1rem;margin-bottom:2rem;}
-    .hero a {background:white;color:#0056b3;padding:0.8rem 2rem;border-radius:50px;font-weight:600;box-shadow:0 4px 10px rgba(0,0,0,0.2);display:inline-flex;align-items:center;gap:0.5rem;transition:0.3s;}
-    .hero a:hover {transform:translateY(-3px);}
-    main {padding:2rem;max-width:1100px;margin:0 auto;}
-    .products {display:flex;flex-wrap:wrap;justify-content:center;gap:2rem;}
-    .product-card {background:white;border-radius:1rem;box-shadow:0 4px 10px rgba(0,0,0,0.1);width:250px;overflow:hidden;display:flex;flex-direction:column;transition:transform 0.3s;}
-    .product-card:hover {transform:translateY(-5px);}
-    .product-card img {width:100%;height:160px;object-fit:cover;}
-    .card-content {padding:1rem;display:flex;flex-direction:column;gap:0.5rem;}
-    .card-content h3 {margin:0;color:#333;}
-    .card-content p {margin:0.3rem 0;}
-    .price {font-weight:600;color:#007bff;}
-    .actions {display:flex;justify-content:space-between;margin-top:1rem;}
-    .actions a {padding:0.5rem 1rem;border-radius:0.5rem;color:white;font-size:0.9rem;display:inline-flex;align-items:center;gap:0.3rem;transition:0.2s;}
-    .actions a.add {background:#007bff;}
-    .actions a.add:hover {background:#0056b3;}
-    .actions a.buy {background:#c67b3e;}
-    .actions a.buy:hover {background:#a65f2d;}
-    footer {background:#0056b3;color:white;text-align:center;padding:1rem;margin-top:2rem;}
-    @media(max-width:768px){header{flex-direction:column;text-align:center;gap:0.5rem;}nav{justify-content:center;flex-wrap:wrap;gap:1rem;}.products{flex-direction:column;align-items:center;}.product-card{width:90%;}.hero h2{font-size:1.8rem;}.hero p{font-size:1rem;}}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buy Items | CAMPUS-CART</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+body {margin:0;font-family:'Poppins',sans-serif;background:#f8fafc;}
+header {background:#007bff;color:white;padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;}
+header h1 {margin:0;font-size:1.6rem;}
+nav a {color:white;margin-left:1rem;text-decoration:none;}
+.hero {background:linear-gradient(135deg,#007bff,#0056b3);color:white;text-align:center;padding:4rem 2rem;}
+.hero a {background:white;color:#0056b3;padding:0.8rem 2rem;border-radius:50px;text-decoration:none;font-weight:600;}
+.products {display:flex;flex-wrap:wrap;justify-content:center;gap:2rem;padding:2rem;}
+.product-card {background:white;border-radius:1rem;overflow:hidden;width:250px;display:flex;flex-direction:column;}
+.product-card img {width:100%;height:160px;object-fit:cover;}
+.card-content {padding:1rem;display:flex;flex-direction:column;gap:0.5rem;}
+.actions {display:flex;justify-content:space-between;margin-top:1rem;}
+.actions a {padding:0.5rem 1rem;border-radius:0.5rem;color:white;text-decoration:none;font-size:0.9rem;display:inline-flex;align-items:center;gap:0.3rem;}
+.actions a.add {background:#007bff;}
+.actions a.buy {background:#c67b3e;}
+footer {background:#0056b3;color:white;text-align:center;padding:1rem;margin-top:2rem;}
+@media (max-width:768px) {.products {flex-direction:column;align-items:center;}.product-card {width:90%;}}
+</style>
 </head>
 <body>
 
 <header>
-  <h1><i class="fas fa-shopping-cart"></i> CAMPUS-CART</h1>
-  <nav>
-    <a href="/"><i class="fas fa-home"></i> Home</a>
-    <a href="/sell"><i class="fas fa-plus-circle"></i> Sell</a>
-    <a href="/cart"><i class="fas fa-cart-shopping"></i> Cart</a>
-    <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
-  </nav>
+<h1><i class="fas fa-shopping-cart"></i> CAMPUS-CART</h1>
+<nav>
+<a href="/"><i class="fas fa-home"></i> Home</a>
+<a href="/sell"><i class="fas fa-plus-circle"></i> Sell</a>
+<a href="/cart"><i class="fas fa-cart-shopping"></i> Cart</a>
+<a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+</nav>
 </header>
 
 <section class="hero">
-  <h2>Buy Products Easily</h2>
-  <p>Explore items listed by fellow students. Get what you need without hassle.</p>
-  <a href="/cart"><i class="fas fa-shopping-cart"></i> View Cart</a>
+<h2>Buy Products Easily</h2>
+<p>Explore items listed by fellow students. Get what you need without hassle.</p>
+<a href="/cart"><i class="fas fa-shopping-cart"></i> View Cart</a>
 </section>
 
-<main>
-  <div class="products">
-    {% for item in items %}
-    <div class="product-card">
-      <img src="{{ url_for('static', filename=item.photo) if item.photo else 'https://source.unsplash.com/400x300/?product' }}" alt="{{ item.name }}">
-      <div class="card-content">
-        <h3>{{ item.name }}</h3>
-        <p>Seller: {{ item.seller.email }}</p>
-        <p class="price">₹ {{ "%.2f"|format(item.price) }}</p>
-        <div class="actions">
-          <a class="add" href="{{ url_for('add_to_cart', item_id=item.id) }}"><i class="fas fa-cart-plus"></i> Add</a>
-          <a class="buy" href="{{ url_for('buy_now', item_id=item.id) }}"><i class="fas fa-bolt"></i> Buy</a>
-        </div>
-      </div>
-    </div>
-    {% endfor %}
-  </div>
+<main class="products">
+{% for item in items %}
+<div class="product-card">
+<img src="{{ url_for('static', filename=item.photo) if item.photo else 'https://source.unsplash.com/400x300/?product' }}" alt="{{ item.name }}">
+<div class="card-content">
+<h3>{{ item.name }}</h3>
+<p>Seller: {{ item.seller.email }}</p>
+<p>₹ {{ item.price }}</p>
+<div class="actions">
+<a class="add" href="{{ url_for('add_to_cart', item_id=item.id) }}"><i class="fas fa-cart-plus"></i> Add</a>
+<a class="buy" href="#"><i class="fas fa-bolt"></i> Buy</a>
+</div>
+</div>
+</div>
+{% endfor %}
 </main>
 
 <footer>
-  <p>&copy; 2025 CAMPUS-CART | Connecting Students through Campus Marketplace</p>
+<p>&copy; 2025 CAMPUS-CART | Connecting Students through Campus Marketplace</p>
 </footer>
 
 </body>

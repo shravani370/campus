@@ -1,323 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your Cart | CAMPUS-CART</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-
-  <style>
-    :root {
-      --primary: #007bff;
-      --primary-dark: #0056b3;
-      --accent: #c67b3e;
-      --text-dark: #222;
-      --text-light: #fff;
-      --bg-light: #f8fafc;
-      --shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: var(--bg-light);
-      color: var(--text-dark);
-      min-height: 100vh;
-    }
-
-    /* ---------- Header ---------- */
-    header {
-      background: var(--primary);
-      color: var(--text-light);
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: var(--shadow);
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-
-    header h1 {
-      font-size: 1.5rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    header a {
-      text-decoration: none;
-      color: var(--text-light);
-      font-weight: 500;
-      transition: 0.3s;
-    }
-
-    header a:hover {
-      color: #ffd700;
-    }
-
-    /* ---------- Main ---------- */
-    main {
-      padding: 2rem;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-
-    h2 {
-      text-align: center;
-      font-size: 2.2rem;
-      color: var(--primary-dark);
-      margin-bottom: 2rem;
-      text-transform: uppercase;
-      position: relative;
-    }
-
-    h2::after {
-      content: "";
-      width: 80px;
-      height: 4px;
-      background: var(--accent);
-      display: block;
-      margin: 10px auto 0;
-      border-radius: 2px;
-    }
-
-    /* ---------- Cart Items ---------- */
-    .cart-items {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-
-    .cart-item {
-      display: flex;
-      align-items: center;
-      background: white;
-      border-radius: 0.8rem;
-      padding: 1rem;
-      box-shadow: var(--shadow);
-      transition: transform 0.2s;
-    }
-
-    .cart-item:hover {
-      transform: translateY(-3px);
-    }
-
-    .cart-item img {
-      width: 120px;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 0.6rem;
-      margin-right: 1.5rem;
-    }
-
-    .item-details {
-      flex: 1;
-    }
-
-    .item-details h3 {
-      font-size: 1.2rem;
-      color: var(--primary-dark);
-      margin-bottom: 0.5rem;
-    }
-
-    .item-details p {
-      margin: 0.3rem 0;
-      font-size: 0.95rem;
-    }
-
-    .price {
-      font-weight: 600;
-      color: var(--accent);
-      font-size: 1.1rem;
-    }
-
-    .remove-btn {
-      background: #dc3545;
-      color: white;
-      border: none;
-      border-radius: 0.5rem;
-      padding: 0.6rem 1.2rem;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    .remove-btn:hover {
-      background: #b52b38;
-      transform: scale(1.05);
-    }
-
-    /* ---------- Total Section ---------- */
-    .cart-total {
-      background: white;
-      border-radius: 0.8rem;
-      box-shadow: var(--shadow);
-      padding: 1.5rem;
-      margin-top: 2rem;
-      text-align: center;
-    }
-
-    .cart-total h3 {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-    }
-
-    .checkout-btn {
-      background: var(--accent);
-      color: white;
-      font-size: 1.1rem;
-      border: none;
-      padding: 0.9rem 2rem;
-      border-radius: 0.6rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .checkout-btn:hover {
-      background: #a85f26;
-      transform: scale(1.05);
-    }
-
-    /* ---------- Empty Cart ---------- */
-    .empty-cart {
-      text-align: center;
-      padding: 4rem 2rem;
-    }
-
-    .empty-cart i {
-      font-size: 4rem;
-      color: var(--primary-dark);
-      margin-bottom: 1rem;
-    }
-
-    .empty-cart p {
-      font-size: 1.2rem;
-      color: #555;
-      margin-bottom: 1.5rem;
-    }
-
-    .empty-cart a {
-      background: var(--primary);
-      color: white;
-      text-decoration: none;
-      padding: 0.8rem 1.6rem;
-      border-radius: 0.6rem;
-      transition: 0.3s;
-    }
-
-    .empty-cart a:hover {
-      background: var(--primary-dark);
-    }
-
-    /* ---------- Footer ---------- */
-    footer {
-      background: var(--primary-dark);
-      color: var(--text-light);
-      text-align: center;
-      padding: 1rem 0;
-      margin-top: 3rem;
-      font-size: 0.9rem;
-    }
-
-    /* ---------- Responsive ---------- */
-    @media (max-width: 768px) {
-      header {
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-
-      .cart-item {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .cart-item img {
-        width: 100%;
-        height: 200px;
-        margin: 0 0 1rem 0;
-      }
-
-      .remove-btn {
-        width: 100%;
-        text-align: center;
-      }
-
-      .checkout-btn {
-        width: 100%;
-      }
-    }
-
-    @media (max-width: 480px) {
-      h2 {
-        font-size: 1.6rem;
-      }
-
-      .item-details h3 {
-        font-size: 1rem;
-      }
-
-      .cart-item img {
-        height: 180px;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Cart | CAMPUS-CART</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+body {margin:0;font-family:'Poppins',sans-serif;background:#f8fafc;color:#222;}
+header {background:#007bff;color:white;padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;}
+header a {color:white;text-decoration:none;}
+main {padding:2rem;max-width:1000px;margin:0 auto;}
+.cart-items{display:flex;flex-direction:column;gap:1.5rem;}
+.cart-item{display:flex;background:white;padding:1rem;border-radius:.8rem;align-items:center;gap:1rem;}
+.cart-item img{width:120px;height:120px;object-fit:cover;border-radius:.6rem;}
+.item-details h3{margin:0;color:#007bff;}
+.item-details p{margin:0.3rem 0;}
+.price{font-weight:600;color:#c67b3e;}
+.remove-btn{background:#dc3545;color:white;padding:.6rem 1.2rem;border:none;border-radius:.5rem;text-decoration:none;}
+.cart-total{background:white;padding:1.5rem;border-radius:.8rem;margin-top:2rem;text-align:center;}
+.checkout-btn{background:#c67b3e;color:white;padding:.9rem 2rem;border:none;border-radius:.6rem;text-decoration:none;}
+.empty-cart{text-align:center;padding:4rem 2rem;}
+.empty-cart i{font-size:4rem;color:#007bff;margin-bottom:1rem;}
+</style>
 </head>
 <body>
 
-  <!-- Header -->
-  <header>
-    <h1><i class="fas fa-shopping-cart"></i> CAMPUS-CART</h1>
-    <a href="/buy"><i class="fas fa-arrow-left"></i> Back to Shop</a>
-  </header>
+<header>
+<h1><i class="fas fa-shopping-cart"></i> CAMPUS-CART</h1>
+<a href="/buy"><i class="fas fa-arrow-left"></i> Back to Shop</a>
+</header>
 
-  <main>
-    <h2><i class="fas fa-cart-shopping"></i> Your Cart</h2>
+<main>
+<h2><i class="fas fa-cart-shopping"></i> Your Cart</h2>
 
-    {% if cart_items %}
-      <div class="cart-items">
-        {% for item in cart_items %}
-          <div class="cart-item">
-            <img src="{{ item.image_url or 'https://source.unsplash.com/400x300/?product' }}" alt="{{ item.name }}">
-            <div class="item-details">
-              <h3>{{ item.name }}</h3>
-              <p>Seller: {{ item.seller }}</p>
-              <p class="price">₹ {{ "%.2f"|format(item.price / 100) }}</p>
-            </div>
-            <form action="{{ url_for('remove_from_cart', item_id=item.id) }}" method="POST">
-              <button class="remove-btn"><i class="fas fa-trash-alt"></i> Remove</button>
-            </form>
-          </div>
-        {% endfor %}
-      </div>
+{% if cart_items %}
+<div class="cart-items">
+{% for item in cart_items %}
+<div class="cart-item">
+<img src="{{ url_for('static', filename=item.photo) if item.photo else 'https://source.unsplash.com/400x300/?product' }}" alt="{{ item.name }}">
+<div class="item-details">
+<h3>{{ item.name }}</h3>
+<p>Seller: {{ item.seller }}</p>
+<p class="price">₹ {{ item.price }}</p>
+</div>
+<a href="{{ url_for('remove_from_cart', item_id=item.id) }}" class="remove-btn"><i class="fas fa-trash-alt"></i> Remove</a>
+</div>
+{% endfor %}
+</div>
 
-      <div class="cart-total">
-        <h3>Total: ₹ {{ "%.2f"|format(total / 100) }}</h3>
-        <form action="{{ url_for('checkout') }}" method="POST">
-          <button class="checkout-btn"><i class="fas fa-credit-card"></i> Proceed to Checkout</button>
-        </form>
-      </div>
+<div class="cart-total">
+<h3>Total: ₹ {{ total }}</h3>
+<a href="{{ url_for('checkout') }}" class="checkout-btn"><i class="fas fa-credit-card"></i> Proceed to Checkout</a>
+</div>
 
-    {% else %}
-      <div class="empty-cart">
-        <i class="fas fa-box-open"></i>
-        <p>Your cart is empty.</p>
-        <a href="/buy"><i class="fas fa-shopping-bag"></i> Browse Items</a>
-      </div>
-    {% endif %}
-  </main>
+{% else %}
+<div class="empty-cart">
+<i class="fas fa-box-open"></i>
+<p>Your cart is empty.</p>
+<a href="/buy"><i class="fas fa-shopping-bag"></i> Browse Items</a>
+</div>
+{% endif %}
 
-  <!-- Footer -->
-  <footer>
-    <p>&copy; 2025 CAMPUS-CART | Connecting Students through Campus Marketplace</p>
-  </footer>
+</main>
 
 </body>
 </html>
